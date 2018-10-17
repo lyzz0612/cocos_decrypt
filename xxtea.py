@@ -106,7 +106,7 @@ def decrypt_file(src_file, key, target_file=None, sign=""):
             return False
         if target_file:
             with open(target_file, "w") as write_obj:
-                write_obj.write(plain_text)
+                write_obj.write(plain_text.replace("\r\n","\n"))
                 write_obj.close()
         return True
     return False
