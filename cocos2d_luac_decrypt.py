@@ -8,6 +8,7 @@
 # @Last Modified time: 2018-10-17 13:26:46
 
 """
+python2.7
 unzip apk
 提取sign 提取key 解密luac
 """
@@ -23,7 +24,8 @@ import xxtea
 
 
 def extract_apk(apkPath, outputDir="output", sign=None, key=None):
-    luacFiles = soFiles = []
+    luacFiles = []
+    soFiles = []
     soluaFiles = ['libcocos2dcpp.so', 'libcocos2dlua.so', 'libhellolua.so']
     if os.path.exists(apkPath):
         fileName = os.path.splitext(os.path.basename(apkPath))[0]
@@ -118,7 +120,7 @@ def guess_sign(luacFiles):
             if not s == fileHeader[c][i]:
                 yes = False
         if yes:
-            sign += s
+            sign += str(s)
     return binascii.a2b_hex(sign)
 
 
@@ -162,9 +164,13 @@ example:
                 key = get_key_list(sign, soFile)
                 for k in key:
                     if xxtea.decrypt_file(luacFiles[0], k, luacFiles[0], sign):
-                        pprint.pprint("sign:{} ,key:{}".format(sign, k))
                         for luac in luacFiles[1:]:
                             xxtea.decrypt_file(luac, k, luac, sign)
+                            # print '[-] decrypt success : {}'.format(luac)
+                        print "[*] sign:{} ,key:{}".format(sign, k)
+                        break
+                    else:
+                        print '[*] not found KEY,sorry'
         else:
             exit('not found so file')
 
